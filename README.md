@@ -15,7 +15,7 @@ It provides the number of occurrences of the word in each document, extracts the
 ## Requirements
 
 - Python 3.x
-- Dependencies: `PyPDF2, kivy, kivymd` 
+- Dependencies: `PyPDF2`, `kivy`, `kivymd` 
 
 Install the dependencies using the following command:
 
