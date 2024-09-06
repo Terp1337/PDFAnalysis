@@ -5,6 +5,7 @@ It provides the number of occurrences of the word in each document, extracts the
 
 ## Features
 
+- Use GUI for enter search request
 - Search for a specific word in all PDF files in a folder (including subfolders).
 - Display the number of occurrences of the word in each document.
 - Extract the line with the searched word and the lines before and after it.
@@ -14,12 +15,13 @@ It provides the number of occurrences of the word in each document, extracts the
 ## Requirements
 
 - Python 3.x
-- Dependencies: `PyPDF2`
+- Dependencies: `PyPDF2, kivy, kivymd` 
 
 Install the dependencies using the following command:
 
 ```
-pip install PyPDF2
+python -m pip install "kivy[full]" kivy_examples kivymd PyPDF
+
 ```
 
 ### Usage
