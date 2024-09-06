@@ -1,0 +1,100 @@
+# gui.kv
+<MainScreen>:
+    name: "main"
+    input_word: input_word
+    result_output: result_output
+    folder_path: folder_path
+    markup: True
+    bold: True
+
+    MDBoxLayout:
+        orientation: "vertical"
+        height: 50
+        padding: 10
+        canvas.before:
+            Color:
+                rgba:1,1,1,0.5
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        MDTextField:
+            id: input_word
+            hint_text: "Suchwort eingeben"
+            line_color_normal: "blue"
+            size_hint_y: None
+            height: 50
+
+        MDTextField:
+            id: folder_path
+            hint_text: "Ordnerpfad eingeben"
+            line_color_normal: "blue"
+            size_hint_y: None
+            height: 50
+
+        MDGridLayout:
+            cols: 2
+            padding: 10
+            size_hint_y: None
+            height: 40
+            canvas.before:
+                Color:
+                    rgba:1,1,1,0.5
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            MDBoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5
+                width: 200
+                canvas.before:
+                    Color:
+                        rgba:1,1,1,0.5
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                MDRaisedButton:
+                    text: "PDFs durchsuchen"
+                    size: [150, 50]
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    on_release: root.search()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5
+                width: 200
+                canvas.before:
+                    Color:
+                        rgba:1,1,1,0.5
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                MDRaisedButton:
+                    text: "Ergebnisse speichern"
+                    size: [150, 50]
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    on_release: root.save_results()
+
+        MDBoxLayout:
+            orientation: "vertical"
+            canvas.before:
+                Color:
+                    rgba:0,0,0,0.25
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            MDLabel:
+                text: "Ergebnisse:"
+                size_hint_y: None
+                height: 30
+
+            ScrollView:
+                MDTextField:
+                    id: result_output
+                    multiline: True
+                    readonly: True
+                    markup: True
+                    size_hint_y: None
+                    height: 250
+                    hint_text: "Suchergebnisse werden hier angezeigt"
