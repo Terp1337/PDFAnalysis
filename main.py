@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
-import PyPDF2
-import re
-import os
+import os, PyPDF2, re
+from kivymd.app import MDApp
+from kivy.lang import Builder
+from kivy.uix.screenmanager import Screen
+from kivy.properties import ObjectProperty
+
+# load external KV-file for GUI building
+Builder.load_file('gui.kv')
 
 
 def extract_text_from_pdf(pdf_file_path):
@@ -21,7 +26,7 @@ def extract_text_from_pdf(pdf_file_path):
 
 def find_word_context_in_page(text, word, page_num):
     """
-    This function extracts the line before the search word, 
+    This function extracts the line before the search word,
     the line with the search word and the line after it.
     """
     pattern = re.compile(r'\b' + re.escape(word) + r'\b', re.IGNORECASE)
@@ -93,9 +98,9 @@ def search_pdfs_in_folder(folder_path, word):
 
 def save_results_to_textfile(results, word, output_file):
     """
-    This function saves the results in a text file. 
-    It writes the file name, the number of occurrences, 
-    the page and the three relevant lines (previous line, 
+    This function saves the results in a text file.
+    It writes the file name, the number of occurrences,
+    the page and the three relevant lines (previous line,
     line with search word, next line) to the file.
     """
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -114,34 +119,66 @@ def save_results_to_textfile(results, word, output_file):
             f.write("\n" + "=" * 80 + "\n\n")
 
 
-def display_results(results, word):
-    """
-    This function display the results in the console, 
-    including the additional row information.
-    """
-    if not results:
-        print(f"Das Wort '{word}' wurde in keinem der PDF-Dokumente gefunden.")
-        return
+class MainScreen(Screen):
+    input_word = ObjectProperty(None)
+    result_output = ObjectProperty(None)
+    folder_path = ObjectProperty(None)
 
-    for result in results:
-        pdf_file_name, word_count, contexts = result
-        print(f"\nDatei: {pdf_file_name}")
-        print(f"Das Wort '{word}' wurde {word_count} mal gefunden.\n")
-        for idx, context in enumerate(contexts):
-            print(f"Vorkommen {idx + 1}: Seite {context['page']}, Zeile {context['line_num']}")
-            if context['previous_line']:
-                print(f"1te Zeile: {context['previous_line']}")
-            print(f"Suchwort : {context['current_line']}")
-            if context['next_line']:
-                print(f"3te Zeile: {context['next_line']}")
-            print("\n")
+    def search(self):
+        word = self.input_word.text
+        folder = self.folder_path.text
+
+        if word and folder:
+            results = search_pdfs_in_folder(folder, word)
+            self.display_results(results, word)
+        else:
+            self.result_output.text = "Bitte geben Sie ein Suchwort und einen Ordner an."
+
+    def display_results(self, results, word):
+        """
+        This function display the results in the GUI,
+        including the additional row information.
+        """
+        if not results:
+            self.result_output.text = f"Das Wort '{word}' wurde in keinem der PDF-Dokumente gefunden."
+            return
+
+        output_text = ""
+        for result in results:
+            pdf_file_name, word_count, contexts = result
+            output_text += "-"*160+"\n"
+            output_text += f"\nDatei: {pdf_file_name}    |   "
+            output_text += f"Das Wort '{word}' wurde {word_count} mal gefunden.\n"
+            for idx, context in enumerate(contexts):
+                output_text += f"Vorkommen {idx + 1}: Seite {context['page']}, Zeile {context['line_num']}\n"
+                if context['previous_line']:
+                    output_text += f"1te Zeile: {context['previous_line']}\n"
+                output_text += f"Suchwort : {context['current_line']}\n"
+                if context['next_line']:
+                    output_text += f"3te Zeile: {context['next_line']}\n"
+                output_text += "\n"
+        self.result_output.text = output_text
+
+    def save_results(self):
+        """
+        This function store the results in a file,
+        including the additional row information.
+        """
+        word = self.input_word.text
+        folder = self.folder_path.text
+        if word and folder:
+            results = search_pdfs_in_folder(folder, word)
+            output_file = os.path.join(folder, 'ergebnisse.txt')
+            save_results_to_textfile(results, word, output_file)
+            self.result_output.text = f"Ergebnisse wurden in {output_file} gespeichert."
+        else:
+            self.result_output.text = "Bitte geben Sie ein Suchwort und einen Ordner an."
 
 
-# Beispielaufruf:
-folder_to_search = 'C:\\MyFolder'  # Ersetze dies durch den Pfad zum Ordner
-word_to_search = 'MyWord'  # Ersetze dies durch das zu suchende Wort
-output_file = 'C:\\MyOutputFolder\\Output.txt'  # Pfad zur Ausgabedatei
+class PDFSearchAppMain(MDApp):
+    def build(self):
+        return MainScreen()
 
-results = search_pdfs_in_folder(folder_to_search, word_to_search)
-display_results(results, word_to_search)
-save_results_to_textfile(results, word_to_search, output_file)
+
+if __name__ == '__main__':
+    PDFSearchAppMain().run()
