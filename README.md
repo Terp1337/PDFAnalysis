@@ -35,30 +35,25 @@ git clone https://ithub.com/your-username/pdf-search-tool.git
 cd pdf-search-tool
 ```
 
-3. Edit the Python code to set the folder path and the word you want to search for:
-
-`folder_to_search:` The path to the folder containing the PDF files to search.
-
-`word_to_search:`   The word to search for in the text.
-
-`output_file:`      The path to the text file where the results will be saved.
-
-
-
-4. Run the script:
+3. Run the script:
 
 ```
-python pdf_search_tool.py
+python main.py
 ```
 
-5. The results will be displayed in the console and saved in the specified text file.
+5. Use the app
+   You can enter in the first row the word to search.
+   You must enter in the secound row the folder with all PDF documents you will be scan.
+   You can search all folders including subfolders.
+
+   The results are displayed in the lower area.
+   The search run is started with the `Search PDF` button. The `Save results` button creates a text file with all the results displayed.
 
 ### Example
-If you're searching for the word "example," the console output might look like this:
+If you're searching for the word "example," the  output might look like this:
 
 ```arduino
-File: document1.pdf
-The word 'example' was found 3 times.
+File: document1.pdf  |  The word 'example' was found 3 times.
 
 Occurrence 1: Page 2, Line 5
 Previous Line: This is the line before the searched word.
